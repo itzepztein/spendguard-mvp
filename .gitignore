@@ -1,0 +1,24 @@
+# Виртуальное окружение
+venv/
+env/
+ENV/
+
+# База данных SQLite (если не хотите её в репозитории – можно исключить)
+db.sqlite3
+
+# Кэш Python
+__pycache__/
+*.pycgit --version
+*.pyo
+
+# Настройки IDE (PyCharm, VS Code)
+.idea/
+.vscode/
+*.iml
+
+# Файлы окружения с секретами
+.env
+*.env
+
+# Собранная статика (если будете собирать)
+staticfiles/

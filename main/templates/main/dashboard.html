@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<div style="display: flex; justify-content: space-between;">
+    <h1>Привет, {{ user.full_name|default:"гость" }}!</h1>
+    <a href="{% url 'setup' %}" class="button">Изменить данные</a>
+</div>
+{% if goal %}
+<div class="card">
+    <h3>🎯 Ваша цель: {{ goal.name }}</h3>
+    <p>Накоплено: {{ goal.current_amount }} ₽ из {{ goal.target_amount }} ₽</p>
+    <progress value="{{ goal.current_amount }}" max="{{ goal.target_amount }}" style="width:100%; height:20px;"></progress>
+    <p>Срок: {{ goal.deadline }}</p>
+</div>
+{% endif %}
+<div class="card">
+    <h3>🤖 Персональные рекомендации ИИ</h3>
+    <ul style="list-style:none; padding:0;">
+        {% for rec in recommendations %}
+        <li style="margin-bottom:1rem;">💡 {{ rec.text }}<br><span style="color:#2b6e3c;">💰 Экономия ≈ {{ rec.saving }} ₽/мес</span></li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="card"><h3>📊 Совет дня</h3><p>Откладывайте 10% от каждого поступления на отдельный счёт.</p></div>
+{% endblock %}

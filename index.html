@@ -62,7 +62,8 @@
 
     document.getElementById('dataForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      
+
+      alert('Форма перехвачена! Сейчас начнется отправка.');
       // 1. Собираем данные из формы
       const data = {
         id: Date.now(),

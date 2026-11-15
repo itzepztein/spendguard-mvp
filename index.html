@@ -63,7 +63,6 @@
     document.getElementById('dataForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      alert('Форма перехвачена! Сейчас начнется отправка.');
       // 1. Собираем данные из формы
       const data = {
         id: Date.now(),
@@ -104,7 +103,6 @@
         // Проверяем ответ от Bitrix24 (если ошибок нет, там будет поле result)
         if (result.result) {
           console.log('Успешно создан контакт в Bitrix24! ID:', result.result);
-          alert('Данные сохранены и успешно отправлены в CRM! Переходим к рекомендациям.');
         } else {
           console.warn('Битрикс вернул ответ, но контакт не создан:', result);
           alert('Данные сохранены локально, но при отправке в CRM произошла ошибка (подробности в консоли).');

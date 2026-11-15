@@ -60,8 +60,10 @@
       if (screen === 'dashboard') renderDashboard();
     }
 
-    document.getElementById('dataForm').addEventListener('submit', function(e) {
+    document.getElementById('dataForm').addEventListener('submit', async function(e) {
       e.preventDefault();
+      
+      // 1. Собираем данные из формы
       const data = {
         id: Date.now(),
         name: document.getElementById('name').value,
@@ -71,10 +73,53 @@
         target: parseInt(document.getElementById('target').value),
         deadline: document.getElementById('deadline').value
       };
+
+      // 2. Сохраняем в localStorage (как было раньше)
       userData.push(data);
       localStorage.setItem('spendguard_data', JSON.stringify(userData));
-      alert('Данные сохранены! Переходим к рекомендациям.');
-      showScreen('dashboard');
+
+      // 3. ОТПРАВЛЯЕМ В BITRIX24 (через Cloudflare Worker)
+      
+      // ВАЖНО: Замените эту ссылку на URL вашего созданного Cloudflare Worker!
+      const WORKER_URL = 'https://royal-tooth-0626.gaffygaf34.workers.dev/'; 
+
+      // Меняем кнопку, чтобы пользователь не нажал дважды
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка в CRM...';
+
+      try {
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data) // Отправляем те же данные
+        });
+
+        const result = await response.json();
+        
+        // Проверяем ответ от Bitrix24 (если ошибок нет, там будет поле result)
+        if (result.result) {
+          console.log('Успешно создан контакт в Bitrix24! ID:', result.result);
+          alert('Данные сохранены и успешно отправлены в CRM! Переходим к рекомендациям.');
+        } else {
+          console.warn('Битрикс вернул ответ, но контакт не создан:', result);
+          alert('Данные сохранены локально, но при отправке в CRM произошла ошибка (подробности в консоли).');
+        }
+
+      } catch (error) {
+        console.error('Ошибка сети при отправке в Worker:', error);
+        alert('Данные сохранены локально. Не удалось связаться с сервером интеграции.');
+      } finally {
+        // Возвращаем кнопку в исходное состояние
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+        
+        // 4. Переходим на экран рекомендаций
+        showScreen('dashboard');
+      }
     });
 
     function renderDashboard() {
